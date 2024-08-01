@@ -1,0 +1,36 @@
+package dev.pedromalta.stonelinxwrapper.modules.info.react
+
+
+import android.content.Context
+import com.facebook.react.bridge.Callback
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+import dev.pedromalta.stonelinxwrapper.modules.auth.Authentication
+import dev.pedromalta.stonelinxwrapper.modules.auth.model.CredentialInfo
+import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
+import dev.pedromalta.stonelinxwrapper.helpers.toReadableMap
+import dev.pedromalta.stonelinxwrapper.modules.info.Info
+import dev.pedromalta.stonelinxwrapper.view.NoOpUiCallback
+
+class InfoModule(
+    private val reactContext: ReactApplicationContext,
+) : ReactContextBaseJavaModule(reactContext) {
+
+    override fun getName(): String {
+        return GetFullModuleName("Info")
+    }
+
+    @ReactMethod
+    fun info(
+        onCallback: Callback,
+    ) {
+        val context: Context = reactContext.applicationContext
+        val info = Info().getInfo(context)
+
+        val infoMap = info.toReadableMap()
+        onCallback.invoke(null, infoMap)
+
+    }
+}
+
