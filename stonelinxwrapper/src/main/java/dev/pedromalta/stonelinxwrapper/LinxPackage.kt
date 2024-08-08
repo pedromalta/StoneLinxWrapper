@@ -7,9 +7,13 @@ import com.facebook.react.bridge.NativeModule
 import com.facebook.react.uimanager.ViewManager
 import dev.pedromalta.stonelinxwrapper.modules.auth.react.AuthenticationModule
 import dev.pedromalta.stonelinxwrapper.modules.info.react.InfoModule
+import com.linx.mobile.logger.Log as LinxMobileLog
 
 class LinxPackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
+        // Manually initiate Linx Logger to avoid crashes on React Native
+        LinxMobileLog.init(null)
+
         return listOf(
             AuthenticationModule(reactContext),
             InfoModule(reactContext),
