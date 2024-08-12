@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.linx.dtefmobile.sdk.Result
 import com.linx.mobile.logger.Log
 import dev.pedromalta.stonelinxwrapper.modules.auth.Authentication
 import dev.pedromalta.stonelinxwrapper.modules.auth.model.CredentialInfo
 import dev.pedromalta.stonelinxwrapper.modules.credit.Credit
+import dev.pedromalta.stonelinxwrapper.modules.credit.model.CreditTransaction
 import dev.pedromalta.stonelinxwrapper.modules.info.Info
 import dev.pedromalta.stonelinxwrapper.view.NoOpUiCallback
 
@@ -19,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         findViewById<Button>(R.id.button_auth).setOnClickListener {
@@ -65,14 +68,17 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button_credit).setOnClickListener {
             val credit = Credit(
                 this,
-                NoOpUiCallback
+                NoOpUiCallback.apply {
+                    resultCallback = { result: Result ->
+                        result.success("200.32")
+                    }
+                }
             )
             credit.transact(
-                mapOf(
-                    "installment" to "1",
-                    "amount" to "100.0",
-                    "cardNumber" to "1234567890123456",
-                    "financialType" to "ONE_INSTALMENT"
+                CreditTransaction(
+                    installmentAmount = 100.0,
+                    installment = 1,
+                    cardNumber = "1234567890123456"
                 ),
                 autoConfirm = true,
                 onFailure = {

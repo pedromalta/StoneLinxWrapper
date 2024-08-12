@@ -8,6 +8,9 @@ import com.linx.dtefmobile.sdk.Result
 import com.linx.dtefmobile.sdk.UICallback
 
 object NoOpUiCallback: UICallback {
+
+    var resultCallback: (result: Result) -> Unit = {}
+
     override fun onBeep() {
         Log.e("StoneLinxWrapperAuthModule", "onBeep")
     }
@@ -16,29 +19,30 @@ object NoOpUiCallback: UICallback {
         Log.e("StoneLinxWrapperAuthModule", "onClean")
     }
 
-    override fun onShowError(p0: String?) {
-        Log.e("StoneLinxWrapperAuthModule", "onShowError: $p0")
+    override fun onShowError(error: String) {
+        Log.e("StoneLinxWrapperAuthModule", "onShowError: $error")
     }
 
-    override fun onShowMessage(p0: String?) {
-        Log.e("StoneLinxWrapperAuthModule", "onShowMessage: $p0")
+    override fun onShowMessage(message: String) {
+        Log.e("StoneLinxWrapperAuthModule", "onShowMessage: $message")
     }
 
-    override fun requestConfirmation(p0: String?, p1: Result?) {
-        Log.e("StoneLinxWrapperAuthModule", "requestConfirmation: $p0")
+    override fun requestConfirmation(message: String, result: Result) {
+        Log.e("StoneLinxWrapperAuthModule", "requestConfirmation: $message")
     }
 
-    override fun onShowAlert(p0: String?) {
-        Log.e("StoneLinxWrapperAuthModule", "onShowAlert: $p0")
+    override fun onShowAlert(alert: String) {
+        Log.e("StoneLinxWrapperAuthModule", "onShowAlert: $alert")
     }
 
-    override fun onInput(input: InputModel<*>?, result: Result?) {
-        Log.e("StoneLinxWrapperAuthModule", "onShowInput: $result")
+    override fun onInput(input: InputModel<*>, result: Result) {
+        Log.e("StoneLinxWrapperAuthModule", "onShowInput: $input")
+        resultCallback.invoke(result)
     }
 
     override fun onShowMenu(
-        p0: String?,
-        p1: MutableList<MenuItem>?,
+        p0: String,
+        p1: MutableList<MenuItem>,
         p2: Int,
         p3: MenuResult?
     ) {
@@ -61,8 +65,8 @@ object NoOpUiCallback: UICallback {
         return 0
     }
 
-    override fun setCanceled(p0: Boolean): Int {
-        Log.e("StoneLinxWrapperAuthModule", "setCanceled: $p0")
+    override fun setCanceled(cancel: Boolean): Int {
+        Log.e("StoneLinxWrapperAuthModule", "setCanceled: $cancel")
         return 0
     }
 }

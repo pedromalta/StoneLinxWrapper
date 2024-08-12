@@ -9,6 +9,7 @@ import com.facebook.react.bridge.ReactMethod
 import dev.pedromalta.stonelinxwrapper.modules.auth.Authentication
 import dev.pedromalta.stonelinxwrapper.modules.auth.model.CredentialInfo
 import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
+import dev.pedromalta.stonelinxwrapper.helpers.sendEvent
 import dev.pedromalta.stonelinxwrapper.modules.uicalback.EventDrivenUiCallback
 
 class AuthenticationModule(
@@ -24,9 +25,9 @@ class AuthenticationModule(
         cnpj: String,
         accessToken: String,
         onCallback: Callback,
-    ): String {
+    ) {
         val context: Context = reactContext.applicationContext
-        val eventDrivenUiCallback = EventDrivenUiCallback(reactContext)
+        val eventDrivenUiCallback = EventDrivenUiCallback(reactContext::sendEvent)
 
         val auth = Authentication(context, eventDrivenUiCallback.uiCallback, CredentialInfo(cnpj, accessToken))
 
@@ -38,7 +39,6 @@ class AuthenticationModule(
                 onCallback.invoke(false, nsu)
             },
         )
-        return eventDrivenUiCallback.uniqueId
 
     }
 }

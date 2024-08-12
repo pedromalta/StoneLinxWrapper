@@ -2,94 +2,70 @@ package dev.pedromalta.stonelinxwrapper.modules.uicalback
 
 import android.util.Log
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
-import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.linx.dtefmobile.sdk.InputModel
 import com.linx.dtefmobile.sdk.MenuItem
 import com.linx.dtefmobile.sdk.MenuResult
 import com.linx.dtefmobile.sdk.Result
 import com.linx.dtefmobile.sdk.UICallback
-import java.util.UUID
+import java.math.BigDecimal
 
+/**
+ * UiCallback implementation that sends events to React Native
+ */
 class EventDrivenUiCallback(
-    private val reactContext: ReactContext
+    private val sendEvent: (eventName: String, params: WritableMap?) -> Unit,
 ) {
 
-    companion object {
-
-        private val uiCallbackMap = mutableMapOf<String, EventDrivenUiCallback>()
-
-        fun getUiCallback(uniqueId: String): EventDrivenUiCallback? {
-            return uiCallbackMap[uniqueId]
-        }
-    }
-
-    val uniqueId = UUID.randomUUID().toString()
-
+    /**
+     * Status of the UiCallback
+     */
     var status = Status.RUNNING
         private set
+
+    /**
+     * Result of calls for this UiCallback,
+     * from here you can confirm, cancel or return to the last step
+     */
     var result: Result? = null
         private set
 
-    init {
-        uiCallbackMap[uniqueId] = this
-    }
+    /**
+     * Expected Inputs from calls for this UiCallback, from here you can fill the input and confirm
+     */
+    var input: InputModel<*>? = null
+        private set
 
-    private fun sendEvent(reactContext: ReactContext, eventName: String, params: WritableMap?) {
-        reactContext
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            .emit(eventName, params)
-    }
-
+    /**
+     * Cancel the UiCallback
+     */
     fun cancel() {
         status = Status.CANCELED
-        uiCallbackMap.remove(uniqueId)
-    }
-
-    fun confirmResult(cancel: Boolean = false) {
-        if (cancel) {
-            result?.canceled()
-        } else {
-            result?.success("")
-        }
-    }
-
-    fun returnLastStep() {
-        result?.returnLastStep()
     }
 
     val uiCallback = object: UICallback {
         override fun onBeep() {
             Log.i("LinxUiCallBackEvent", "onBeep")
             sendEvent(
-                reactContext,
                 "onBeep",
-                Arguments.createMap().apply {
-                    putString("uniqueId", uniqueId)
-                }
+                null
             )
         }
 
         override fun onClean() {
             Log.i("LinxUiCallBackEvent", "onClean")
             sendEvent(
-                reactContext,
                 "onClean",
-                Arguments.createMap().apply {
-                    putString("uniqueId", uniqueId)
-                }
+                null
             )
         }
 
         override fun onShowError(error: String?) {
             Log.i("LinxUiCallBackEvent", "onShowError: $error")
             sendEvent(
-                reactContext,
                 "onShowError",
                 Arguments.createMap().apply {
                     putString("error", error)
-                    putString("uniqueId", uniqueId)
                 }
             )
         }
@@ -97,11 +73,9 @@ class EventDrivenUiCallback(
         override fun onShowMessage(message: String?) {
             Log.i("LinxUiCallBackEvent", "onShowMessage: $message")
             sendEvent(
-                reactContext,
                 "onShowMessage",
                 Arguments.createMap().apply {
                     putString("message", message)
-                    putString("uniqueId", uniqueId)
                 }
             )
         }
@@ -110,11 +84,9 @@ class EventDrivenUiCallback(
             Log.i("LinxUiCallBackEvent", "requestConfirmation: $message")
             this@EventDrivenUiCallback.result = result
             sendEvent(
-                reactContext,
                 "onRequestConfirmation",
                 Arguments.createMap().apply {
                     putString("message", message)
-                    putString("uniqueId", uniqueId)
                 }
             )
         }
@@ -122,17 +94,42 @@ class EventDrivenUiCallback(
         override fun onShowAlert(alert: String?) {
             Log.i("LinxUiCallBackEvent", "onShowAlert: $alert")
             sendEvent(
-                reactContext,
                 "onShowAlert",
                 Arguments.createMap().apply {
                     putString("alert", alert)
-                    putString("uniqueId", uniqueId)
                 }
             )
         }
 
         override fun onInput(input: InputModel<*>?, result: Result?) {
-            Log.i("LinxUiCallBackEvent", "onShowInput: $result")
+            Log.i("LinxUiCallBackEvent", "onShowInput: $input")
+            this@EventDrivenUiCallback.result = result
+            this@EventDrivenUiCallback.input = input
+            if (input == null) {
+                return
+            }
+
+            sendEvent(
+                "onInput",
+                Arguments.createMap().apply {
+                    putString("inputType", input.type.name)
+                    putString("label", input.label)
+                    putString("defaultValue", input.defaultValue)
+                    putDouble("minLength", input.minLength.toDouble())
+                    putDouble("maxLength", input.maxLength.toDouble())
+                    putBoolean("secret", input.isSecret)
+                    putBoolean("clearLabel", input.isClearLabel)
+                    putDouble("exact", input.exact.toDouble())
+                    if (input.type == InputModel.Type.AMOUNT) {
+                        putDouble("minValue", (input.minValue as? BigDecimal?)?.toDouble() ?: 0.0)
+                        putDouble("maxValue", (input.maxValue as? BigDecimal?)?.toDouble() ?: 0.0)
+                    }
+                    if (input.type == InputModel.Type.NUMBER) {
+                        putDouble("minValue", (input.minValue as? Int?)?.toDouble() ?: 0.0)
+                        putDouble("maxValue", (input.maxValue as? Int?)?.toDouble() ?: 0.0)
+                    }
+                }
+            )
         }
 
         override fun onShowMenu(
@@ -141,7 +138,7 @@ class EventDrivenUiCallback(
             p2: Int,
             p3: MenuResult?
         ) {
-            TODO("Not yet implemented")
+            //TODO("Not yet implemented")
         }
 
         override fun onMaskInput(
@@ -152,7 +149,7 @@ class EventDrivenUiCallback(
             p4: Boolean,
             p5: Result?
         ) {
-            TODO("Not yet implemented")
+            //TODO("Not yet implemented")
         }
 
         /**
