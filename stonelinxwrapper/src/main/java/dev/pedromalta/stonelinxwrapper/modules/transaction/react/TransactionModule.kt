@@ -1,4 +1,4 @@
-package dev.pedromalta.stonelinxwrapper.modules.credit.react
+package dev.pedromalta.stonelinxwrapper.modules.transaction.react
 
 import android.app.Activity
 import com.facebook.react.bridge.Callback
@@ -8,60 +8,66 @@ import com.facebook.react.bridge.ReactMethod
 import com.linx.dtefmobile.model.FinancialType
 import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
 import dev.pedromalta.stonelinxwrapper.helpers.sendEvent
-import dev.pedromalta.stonelinxwrapper.modules.credit.Credit
-import dev.pedromalta.stonelinxwrapper.modules.credit.model.CreditTransaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.Transaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
 import dev.pedromalta.stonelinxwrapper.modules.uicalback.EventDrivenUiCallback
 
-class CreditModule(
+class TransactionModule(
     private val reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext) {
 
 
     companion object {
-        private var credit: Credit? = null
+        private var transaction: Transaction? = null
         private var eventDrivenUiCallback: EventDrivenUiCallback? = null
         private fun clear() {
-            credit = null
+            transaction = null
             eventDrivenUiCallback = null
         }
     }
 
     override fun getName(): String {
-        return GetFullModuleName("Credit")
+        return GetFullModuleName("Transaction")
     }
 
     @ReactMethod
-    fun transact(
+    fun creditTransact(
         autoConfirm: Boolean,
         enablePinpad: Boolean,
-        installmentAmount: Double,
-        installment: Double,
+        installmentAmount: String,
+        installment: String,
         cardNumber: String,
         financialType: String,
         onCallback: Callback,
     ) {
-        val activity: Activity = currentActivity ?: run  {
+        val activity: Activity = currentActivity ?: run {
             onCallback.invoke(true, "Activity is null")
             return
         }
 
-        val credit = credit ?: run {
+        val transaction = transaction ?: run {
             val uiCallback = EventDrivenUiCallback(reactContext::sendEvent)
-            Credit(activity, uiCallback.uiCallback)
+            Transaction(activity, uiCallback.uiCallback)
                 .also {
-                    credit = it
+                    transaction = it
                     eventDrivenUiCallback = uiCallback
                 }
         }
 
-        credit.transact(
-            CreditTransaction(
-                installmentAmount = installmentAmount,
-                installment = installment.toInt(),
-                cardNumber = cardNumber,
-                enablePinpad = enablePinpad,
-                financialType = FinancialType.fromString(financialType)
-            ),
+        transaction.transact(
+            CreditTransaction.Builder().apply {
+                if (installmentAmount.isNotBlank()) {
+                    installmentAmount(installmentAmount.toDouble())
+                }
+                if (installment.isNotBlank()) {
+                    installment(installment.toInt())
+                }
+                if (cardNumber.isNotBlank()) {
+                    cardNumber(cardNumber)
+                }
+                enablePinpad(enablePinpad)
+                financialType(FinancialType.fromString(financialType))
+            }.build(),
             autoConfirm = autoConfirm,
             onFailure = {
                 onCallback.invoke(true)
@@ -78,7 +84,7 @@ class CreditModule(
         nsu: String,
         onCallback: Callback,
     ) {
-        val credit = credit ?: run {
+        val credit = transaction ?: run {
             onCallback.invoke(true, "Credit instance is null")
             return
         }
@@ -96,7 +102,7 @@ class CreditModule(
     fun finalizeTransaction(
         onCallback: Callback,
     ) {
-        val credit = credit ?: run {
+        val credit = transaction ?: run {
             onCallback.invoke(true, "Credit instance is null")
             return
         }
@@ -109,13 +115,13 @@ class CreditModule(
 
     @ReactMethod
     fun getRunningStatus(): Boolean {
-        val uiCallback = credit?.uiCallback
+        val uiCallback = transaction?.uiCallback
         return uiCallback != null && uiCallback.canceledStatus != 1
     }
 
     @ReactMethod
     fun cancel() {
-        credit?.uiCallback?.setCanceled(true)
+        transaction?.uiCallback?.setCanceled(true)
     }
 
     @ReactMethod

@@ -1,4 +1,4 @@
-package dev.pedromalta.stonelinxwrapper.modules.credit
+package dev.pedromalta.stonelinxwrapper.modules.transaction
 
 import android.app.Activity
 import android.util.Log
@@ -7,10 +7,9 @@ import com.linx.dtefmobile.sdk.CreditTransactionBuilder
 import com.linx.dtefmobile.sdk.MobileSDK
 import com.linx.dtefmobile.sdk.TransactionBuilder
 import com.linx.dtefmobile.sdk.UICallback
-import dev.pedromalta.stonelinxwrapper.modules.credit.model.CreditTransaction
-import dev.pedromalta.stonelinxwrapper.modules.uicalback.EventDrivenUiCallback
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
 
-class Credit(
+class Transaction(
     activity: Activity,
     val uiCallback: UICallback,
 ) {
@@ -27,7 +26,20 @@ class Credit(
 
         val transactionBuilder: CreditTransactionBuilder = TransactionBuilder.credit()
             .withApplicationName<CreditTransactionBuilder>(applicationName)
-            .withEnablePinpad(true)
+            .apply {
+                withFinancialType(creditTransaction.financialType)
+                if (creditTransaction.installmentAmount != null) {
+                    withInstallmentAmount(creditTransaction.installmentAmount)
+                }
+                if (creditTransaction.installment != null) {
+                    withInstallment(creditTransaction.installment)
+                }
+                if (!creditTransaction.cardNumber.isNullOrEmpty()) {
+                    withCardNumber(creditTransaction.cardNumber)
+                }
+            }
+            .withEnablePinpad(creditTransaction.enablePinpad)
+
 
         mobileSDK.executeTransaction(transactionBuilder.build()) { status, transactionResult ->
             if (uiCallback.canceledStatus == 1) {

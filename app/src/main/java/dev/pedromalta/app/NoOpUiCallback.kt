@@ -1,4 +1,4 @@
-package dev.pedromalta.stonelinxwrapper.view
+package dev.pedromalta.app
 
 import android.util.Log
 import com.linx.dtefmobile.sdk.InputModel

@@ -4,15 +4,12 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.linx.dtefmobile.sdk.Result
 import com.linx.mobile.logger.Log
 import dev.pedromalta.stonelinxwrapper.modules.auth.Authentication
 import dev.pedromalta.stonelinxwrapper.modules.auth.model.CredentialInfo
-import dev.pedromalta.stonelinxwrapper.modules.credit.Credit
-import dev.pedromalta.stonelinxwrapper.modules.credit.model.CreditTransaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.Transaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
 import dev.pedromalta.stonelinxwrapper.modules.info.Info
-import dev.pedromalta.stonelinxwrapper.view.DefaultUiCallback
-import dev.pedromalta.stonelinxwrapper.view.NoOpUiCallback
 
 class MainActivity : AppCompatActivity() {
 
@@ -67,16 +64,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.button_credit).setOnClickListener {
-            val credit = Credit(
+            val transaction = Transaction(
                 this,
                 DefaultUiCallback(this)
             )
-            credit.transact(
-                CreditTransaction(
-                    installmentAmount = 100.0,
-                    installment = 1,
-                    cardNumber = "1234567890123456"
-                ),
+            transaction.transact(
+                CreditTransaction.Builder().apply {
+                    installment(2)
+                    installmentAmount(100.0)
+                    cardNumber("1234567890123456")
+                }.build(),
                 autoConfirm = true,
                 onFailure = {
                     Log.d(TAG, "Falha na transação")

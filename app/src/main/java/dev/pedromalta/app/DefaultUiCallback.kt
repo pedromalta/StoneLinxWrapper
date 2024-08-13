@@ -1,4 +1,4 @@
-package dev.pedromalta.stonelinxwrapper.view
+package dev.pedromalta.app
 
 import android.app.Activity
 import android.text.InputType
@@ -12,7 +12,9 @@ import com.linx.dtefmobile.sdk.Result
 import com.linx.dtefmobile.sdk.UICallback
 
 
-class DefaultUiCallback(private val activity: Activity) : UICallback {
+class DefaultUiCallback(
+    private val activity: Activity
+) : UICallback {
 
     companion object {
         const val TAG = "DefaultUiCallback"

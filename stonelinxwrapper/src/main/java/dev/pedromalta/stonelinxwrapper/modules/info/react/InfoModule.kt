@@ -6,13 +6,9 @@ import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.ReadableMap
-import dev.pedromalta.stonelinxwrapper.modules.auth.Authentication
-import dev.pedromalta.stonelinxwrapper.modules.auth.model.CredentialInfo
 import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
 import dev.pedromalta.stonelinxwrapper.helpers.toReadableMap
 import dev.pedromalta.stonelinxwrapper.modules.info.Info
-import dev.pedromalta.stonelinxwrapper.view.NoOpUiCallback
 
 class InfoModule(
     private val reactContext: ReactApplicationContext,

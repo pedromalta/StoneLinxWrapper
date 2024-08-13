@@ -6,7 +6,7 @@ import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
 import dev.pedromalta.stonelinxwrapper.modules.auth.react.AuthenticationModule
-import dev.pedromalta.stonelinxwrapper.modules.credit.react.CreditModule
+import dev.pedromalta.stonelinxwrapper.modules.transaction.react.TransactionModule
 import dev.pedromalta.stonelinxwrapper.modules.info.react.InfoModule
 import com.linx.mobile.logger.Log as LinxMobileLog
 
@@ -17,7 +17,7 @@ class LinxPackage : ReactPackage {
 
         return listOf(
             AuthenticationModule(reactContext),
-            CreditModule(reactContext),
+            TransactionModule(reactContext),
             InfoModule(reactContext),
         )
     }
