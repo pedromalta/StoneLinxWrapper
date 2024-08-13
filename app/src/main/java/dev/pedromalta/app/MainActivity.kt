@@ -11,6 +11,7 @@ import dev.pedromalta.stonelinxwrapper.modules.auth.model.CredentialInfo
 import dev.pedromalta.stonelinxwrapper.modules.credit.Credit
 import dev.pedromalta.stonelinxwrapper.modules.credit.model.CreditTransaction
 import dev.pedromalta.stonelinxwrapper.modules.info.Info
+import dev.pedromalta.stonelinxwrapper.view.DefaultUiCallback
 import dev.pedromalta.stonelinxwrapper.view.NoOpUiCallback
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button_auth).setOnClickListener {
             val auth = Authentication(
                 this,
-                NoOpUiCallback,
+                NoOpUiCallback(),
                 CredentialInfo(
                     "62774176000158",
                     "Rw\$b05;\$m2J6}Gq7wh@]"
@@ -68,11 +69,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button_credit).setOnClickListener {
             val credit = Credit(
                 this,
-                NoOpUiCallback.apply {
-                    resultCallback = { result: Result ->
-                        result.success("200.32")
-                    }
-                }
+                DefaultUiCallback(this)
             )
             credit.transact(
                 CreditTransaction(

@@ -7,9 +7,9 @@ import com.linx.dtefmobile.sdk.MenuResult
 import com.linx.dtefmobile.sdk.Result
 import com.linx.dtefmobile.sdk.UICallback
 
-object NoOpUiCallback: UICallback {
+class NoOpUiCallback: UICallback {
 
-    var resultCallback: (result: Result) -> Unit = {}
+    private var canceled = false
 
     override fun onBeep() {
         Log.e("StoneLinxWrapperAuthModule", "onBeep")
@@ -37,7 +37,6 @@ object NoOpUiCallback: UICallback {
 
     override fun onInput(input: InputModel<*>, result: Result) {
         Log.e("StoneLinxWrapperAuthModule", "onShowInput: $input")
-        resultCallback.invoke(result)
     }
 
     override fun onShowMenu(
@@ -62,11 +61,12 @@ object NoOpUiCallback: UICallback {
 
     override fun getCanceledStatus(): Int {
         Log.e("StoneLinxWrapperAuthModule", "getCanceledStatus")
-        return 0
+        return if (!canceled) 0  else 1
     }
 
     override fun setCanceled(cancel: Boolean): Int {
         Log.e("StoneLinxWrapperAuthModule", "setCanceled: $cancel")
+        canceled = cancel
         return 0
     }
 }

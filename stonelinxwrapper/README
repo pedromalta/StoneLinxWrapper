@@ -1,0 +1,2 @@
+Run ./gradlew -b publish.gradle.kts publish
+to update the libs in the local maven repository.

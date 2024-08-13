@@ -6,6 +6,7 @@ import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableMap
 import dev.pedromalta.stonelinxwrapper.modules.auth.Authentication
 import dev.pedromalta.stonelinxwrapper.modules.auth.model.CredentialInfo
 import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
@@ -22,14 +23,11 @@ class InfoModule(
     }
 
     @ReactMethod
-    fun info(
-        onCallback: Callback,
-    ) {
+    fun info(callback: Callback) {
         val context: Context = reactContext.applicationContext
         val info = Info().getInfo(context)
 
-        val infoMap = info.toReadableMap()
-        onCallback.invoke(null, infoMap)
+        callback.invoke(info.toReadableMap())
 
     }
 }

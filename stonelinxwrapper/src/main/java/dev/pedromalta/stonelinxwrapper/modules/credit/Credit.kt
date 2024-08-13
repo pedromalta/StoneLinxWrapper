@@ -24,20 +24,17 @@ class Credit(
         onFailure: () -> Unit,
         onSuccess: (nsu: Int) -> Unit
     ) {
+
         val transactionBuilder: CreditTransactionBuilder = TransactionBuilder.credit()
             .withApplicationName<CreditTransactionBuilder>(applicationName)
-            .withInstallment(creditTransaction.installment)
-            .withInstallmentAmount(creditTransaction.installmentAmount)
-            .withCardNumber(creditTransaction.cardNumber)
-            .withFinancialType(creditTransaction.financialType)
-            .withEnablePinpad(creditTransaction.enablePinpad)
+            .withEnablePinpad(true)
 
         mobileSDK.executeTransaction(transactionBuilder.build()) { status, transactionResult ->
-            val nsu = transactionResult.nsu.toInt()
             if (uiCallback.canceledStatus == 1) {
                 onFailure()
             } else {
                 if (status) {
+                    val nsu = transactionResult.nsu.toInt()
                     if (autoConfirm) {
                         confirmTransaction(nsu)
                     }

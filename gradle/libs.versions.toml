@@ -1,17 +1,17 @@
 [versions]
-agp = "8.5.1"
+agp = "8.5.2"
 kotlin = "1.9.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-logbackAndroid = "2.0.0"
+logbackAndroid = "3.0.0"
 reactNative = "0.20.1"
-slf4jApi = "1.7.28"
+slf4jApi = "2.0.7"
 localMavenVersion = "1.0.0"
 coreKtx = "1.13.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-activity = "1.9.0"
+activity = "1.9.1"
 constraintlayout = "2.1.4"
 
 [libraries]

@@ -18,12 +18,6 @@ class EventDrivenUiCallback(
 ) {
 
     /**
-     * Status of the UiCallback
-     */
-    var status = Status.RUNNING
-        private set
-
-    /**
      * Result of calls for this UiCallback,
      * from here you can confirm, cancel or return to the last step
      */
@@ -40,10 +34,13 @@ class EventDrivenUiCallback(
      * Cancel the UiCallback
      */
     fun cancel() {
-        status = Status.CANCELED
+        uiCallback.setCanceled(true)
     }
 
     val uiCallback = object: UICallback {
+
+        private var canceled = false
+
         override fun onBeep() {
             Log.i("LinxUiCallBackEvent", "onBeep")
             sendEvent(
@@ -152,33 +149,15 @@ class EventDrivenUiCallback(
             //TODO("Not yet implemented")
         }
 
-        /**
-         * Indica que o usuario tem a intencao de abortar a captura assincrona.
-         * Esse tipo de interacao e captura, ocorre normalmente no momento da captura de dados do cartao.
-         *
-         * Ex.: Leitura do cartao e captura da senha
-         */
-        override fun setCanceled(canceled: Boolean): Int {
-            this@EventDrivenUiCallback.cancel()
+        override fun getCanceledStatus(): Int {
+            Log.e("StoneLinxWrapperAuthModule", "getCanceledStatus")
+            return if (!canceled) 0  else 1
+        }
+
+        override fun setCanceled(cancel: Boolean): Int {
+            Log.e("StoneLinxWrapperAuthModule", "setCanceled: $cancel")
+            canceled = cancel
             return 0
         }
-
-        /**
-         * Informa o status da intencao de abortar uma captura assincrona.
-         * Esse tipo de interacao e captura, ocorre normalmente no momento da captura de dados do cartao.
-         *
-         * Ex.: Leitura do cartao e captura da senha
-         */
-        override fun getCanceledStatus(): Int {
-            return when (status) {
-                Status.RUNNING -> 0
-                Status.CANCELED -> 1
-            }
-        }
-    }
-
-    enum class Status {
-        RUNNING,
-        CANCELED
     }
 }

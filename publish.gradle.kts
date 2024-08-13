@@ -5,8 +5,8 @@ plugins {
 }
 
 val aarFiles = listOf(
-    "${project.rootDir}/libs/dtefmobile-2.6.6-2308141153-linx-debug.aar" to "dtefmobile-debug",
-    "${project.rootDir}/libs/dtefmobile-2.6.6-2308141153-linx-release.aar" to "dtefmobile-release",
+    "${project.rootDir}/libs/dtefmobile-2.7.10-2404091140-linx-debug.aar" to "dtefmobile-debug",
+    "${project.rootDir}/libs/dtefmobile-2.7.10-2404091140-linx-release.aar" to "dtefmobile-release",
     "${project.rootDir}/libs/log-manager-1.0.0-210220.aar" to "log-manager",
     "${project.rootDir}/libs/linxpay-sdk-1.1.0-2203201805.aar" to "linxpay-sdk",
 )
