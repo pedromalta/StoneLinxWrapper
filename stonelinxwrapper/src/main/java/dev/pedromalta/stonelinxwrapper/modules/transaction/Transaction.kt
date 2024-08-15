@@ -108,8 +108,8 @@ class Transaction(
         return TransactionBuilder.debit()
             .withApplicationName<DebitTransactionBuilder>(applicationName)
             .apply {
-                if (transaction.ammount != null) {
-                    withAmount<DebitTransactionBuilder>(transaction.ammount)
+                if (transaction.amount != null) {
+                    withAmount<DebitTransactionBuilder>(transaction.amount)
                 }
                 if (!transaction.cpf.isNullOrEmpty()){
                     withCpf<DebitTransactionBuilder>(transaction.cpf)

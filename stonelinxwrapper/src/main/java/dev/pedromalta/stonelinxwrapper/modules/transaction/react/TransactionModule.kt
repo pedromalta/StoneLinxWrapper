@@ -38,13 +38,13 @@ class TransactionModule(
     fun debit(
         autoConfirm: Boolean,
         enablePinpad: Boolean,
-        ammount: String,
+        amount: String,
         cpf: String,
         onCallback: Callback,
     ) {
         val debitTransaction = DebitTransaction.Builder().apply {
-            if (ammount.isNotBlank()) {
-                ammount(ammount.toDouble())
+            if (amount.isNotBlank()) {
+                amount(amount.toDouble())
             }
             if (cpf.isNotBlank()) {
                 cpf(cpf)
