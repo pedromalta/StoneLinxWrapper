@@ -2,11 +2,13 @@ package dev.pedromalta.stonelinxwrapper.modules.transaction
 
 import android.app.Activity
 import android.util.Log
+import com.facebook.react.bridge.ReadableMap
 import com.linx.dtefmobile.sdk.ConfirmationTransactionBuilder
 import com.linx.dtefmobile.sdk.CreditTransactionBuilder
 import com.linx.dtefmobile.sdk.MobileSDK
 import com.linx.dtefmobile.sdk.TransactionBuilder
 import com.linx.dtefmobile.sdk.UICallback
+import dev.pedromalta.stonelinxwrapper.helpers.toReadableMap
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
 
 class Transaction(
@@ -21,7 +23,7 @@ class Transaction(
         creditTransaction: CreditTransaction,
         autoConfirm: Boolean,
         onFailure: () -> Unit,
-        onSuccess: (nsu: Int) -> Unit
+        onSuccess: (transactionResult: ReadableMap) -> Unit
     ) {
 
         val transactionBuilder: CreditTransactionBuilder = TransactionBuilder.credit()
@@ -50,7 +52,7 @@ class Transaction(
                     if (autoConfirm) {
                         confirmTransaction(nsu)
                     }
-                    onSuccess(nsu)
+                    onSuccess(transactionResult.toReadableMap())
                 } else {
                     onFailure()
                 }
