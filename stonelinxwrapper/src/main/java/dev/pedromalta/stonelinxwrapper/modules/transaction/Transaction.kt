@@ -5,11 +5,16 @@ import android.util.Log
 import com.facebook.react.bridge.ReadableMap
 import com.linx.dtefmobile.sdk.ConfirmationTransactionBuilder
 import com.linx.dtefmobile.sdk.CreditTransactionBuilder
+import com.linx.dtefmobile.sdk.DebitTransactionBuilder
 import com.linx.dtefmobile.sdk.MobileSDK
+import com.linx.dtefmobile.sdk.Transaction
 import com.linx.dtefmobile.sdk.TransactionBuilder
 import com.linx.dtefmobile.sdk.UICallback
 import dev.pedromalta.stonelinxwrapper.helpers.toReadableMap
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.BaseTransaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.BaseTransactionBuilder
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.DebitTransaction
 
 class Transaction(
     activity: Activity,
@@ -20,30 +25,30 @@ class Transaction(
     private val mobileSDK = MobileSDK.init(activity, uiCallback)
 
     fun transact(
-        creditTransaction: CreditTransaction,
+        transaction: BaseTransaction,
         autoConfirm: Boolean,
         onFailure: () -> Unit,
         onSuccess: (transactionResult: ReadableMap) -> Unit
     ) {
-
-        val transactionBuilder: CreditTransactionBuilder = TransactionBuilder.credit()
-            .withApplicationName<CreditTransactionBuilder>(applicationName)
-            .apply {
-                withFinancialType(creditTransaction.financialType)
-                if (creditTransaction.installmentAmount != null) {
-                    withInstallmentAmount(creditTransaction.installmentAmount)
-                }
-                if (creditTransaction.installment != null) {
-                    withInstallment(creditTransaction.installment)
-                }
-                if (!creditTransaction.cardNumber.isNullOrEmpty()) {
-                    withCardNumber(creditTransaction.cardNumber)
-                }
+        val transactionBuilder = when (transaction) {
+            is CreditTransaction -> {
+                buildCreditTransaction(transaction)
             }
-            .withEnablePinpad(creditTransaction.enablePinpad)
+            is DebitTransaction -> {
+                buildDebitTransaction(transaction)
+            }
+        }
 
+        transact(transactionBuilder.build(), autoConfirm, onFailure, onSuccess)
+    }
 
-        mobileSDK.executeTransaction(transactionBuilder.build()) { status, transactionResult ->
+    fun transact(
+        transaction: Transaction,
+        autoConfirm: Boolean,
+        onFailure: () -> Unit,
+        onSuccess: (transactionResult: ReadableMap) -> Unit
+    ) {
+        mobileSDK.executeTransaction(transaction) { status, transactionResult ->
             if (uiCallback.canceledStatus == 1) {
                 onFailure()
             } else {
@@ -79,6 +84,39 @@ class Transaction(
         Log.i("FinalizeTransaction", "Finalizing Transaction")
         val resultCode = mobileSDK.finalizeTransaction()
         Log.i("FinalizeTransaction", "finalizeTransaction resultCode: $resultCode")
+    }
+
+    private fun buildCreditTransaction(transaction: CreditTransaction): TransactionBuilder {
+        return TransactionBuilder.credit()
+            .withApplicationName<CreditTransactionBuilder>(applicationName)
+            .apply {
+                withFinancialType(transaction.financialType)
+                if (transaction.installmentAmount != null) {
+                    withInstallmentAmount(transaction.installmentAmount)
+                }
+                if (transaction.installment != null) {
+                    withInstallment(transaction.installment)
+                }
+                if (!transaction.cardNumber.isNullOrEmpty()) {
+                    withCardNumber(transaction.cardNumber)
+                }
+            }
+            .withEnablePinpad(transaction.enablePinpad)
+    }
+
+    private fun buildDebitTransaction(transaction: DebitTransaction): TransactionBuilder {
+        return TransactionBuilder.debit()
+            .withApplicationName<DebitTransactionBuilder>(applicationName)
+            .apply {
+                if (transaction.ammount != null) {
+                    withAmount<DebitTransactionBuilder>(transaction.ammount)
+                }
+                if (!transaction.cpf.isNullOrEmpty()){
+                    withCpf<DebitTransactionBuilder>(transaction.cpf)
+                }
+                withEnablePinpad<DebitTransactionBuilder>(transaction.enablePinpad)
+            }
+            .withEnablePinpad(true)
     }
 
 }

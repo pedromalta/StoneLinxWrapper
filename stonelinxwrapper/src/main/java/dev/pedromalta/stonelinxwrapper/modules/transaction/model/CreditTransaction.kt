@@ -8,9 +8,9 @@ class CreditTransaction private constructor(
     val cardNumber: String?,
     val enablePinpad: Boolean,
     val financialType: FinancialType
-) {
+): BaseTransaction {
 
-    class Builder() {
+    class Builder {
         private var installmentAmount: Double? = null
         private var installment: Int? = null
         private var cardNumber: String? = null

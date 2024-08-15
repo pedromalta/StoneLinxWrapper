@@ -6,10 +6,14 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.linx.dtefmobile.model.FinancialType
+import com.linx.dtefmobile.sdk.DebitTransactionBuilder
+import com.linx.dtefmobile.sdk.TransactionBuilder
 import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
 import dev.pedromalta.stonelinxwrapper.helpers.sendEvent
 import dev.pedromalta.stonelinxwrapper.modules.transaction.Transaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.BaseTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.DebitTransaction
 import dev.pedromalta.stonelinxwrapper.modules.uicalback.EventDrivenUiCallback
 
 class TransactionModule(
@@ -31,7 +35,29 @@ class TransactionModule(
     }
 
     @ReactMethod
-    fun creditTransact(
+    fun debit(
+        autoConfirm: Boolean,
+        enablePinpad: Boolean,
+        ammount: String,
+        cpf: String,
+        onCallback: Callback,
+    ) {
+        val debitTransaction = DebitTransaction.Builder().apply {
+            if (ammount.isNotBlank()) {
+                ammount(ammount.toDouble())
+            }
+            if (cpf.isNotBlank()) {
+                cpf(cpf)
+            }
+            enablePinpad(enablePinpad)
+        }.build()
+
+        transact(debitTransaction, autoConfirm, onCallback)
+
+    }
+
+    @ReactMethod
+    fun credit(
         autoConfirm: Boolean,
         enablePinpad: Boolean,
         installmentAmount: String,
@@ -40,77 +66,39 @@ class TransactionModule(
         financialType: String,
         onCallback: Callback,
     ) {
-        val activity: Activity = currentActivity ?: run {
-            onCallback.invoke(true, "Activity is null")
-            return
-        }
 
-        val transaction = transaction ?: run {
-            val uiCallback = EventDrivenUiCallback(reactContext::sendEvent)
-            Transaction(activity, uiCallback.uiCallback)
-                .also {
-                    transaction = it
-                    eventDrivenUiCallback = uiCallback
-                }
-        }
-
-        transaction.transact(
-            CreditTransaction.Builder().apply {
-                if (installmentAmount.isNotBlank()) {
-                    installmentAmount(installmentAmount.toDouble())
-                }
-                if (installment.isNotBlank()) {
-                    installment(installment.toInt())
-                }
-                if (cardNumber.isNotBlank()) {
-                    cardNumber(cardNumber)
-                }
-                enablePinpad(enablePinpad)
-                financialType(FinancialType.fromString(financialType))
-            }.build(),
-            autoConfirm = autoConfirm,
-            onFailure = {
-                onCallback.invoke(true)
-            },
-            onSuccess = { nsu ->
-                onCallback.invoke(false, nsu)
+        val creditTransaction = CreditTransaction.Builder().apply {
+            if (installmentAmount.isNotBlank()) {
+                installmentAmount(installmentAmount.toDouble())
             }
-        )
+            if (installment.isNotBlank()) {
+                installment(installment.toInt())
+            }
+            if (cardNumber.isNotBlank()) {
+                cardNumber(cardNumber)
+            }
+            enablePinpad(enablePinpad)
+            financialType(FinancialType.fromString(financialType))
+        }.build()
+
+        transact(creditTransaction, autoConfirm, onCallback)
 
     }
 
     @ReactMethod
-    fun confirmTransaction(
-        nsu: String,
-        onCallback: Callback,
-    ) {
-        val credit = transaction ?: run {
-            onCallback.invoke(true, "Credit instance is null")
-            return
+    fun confirmTransaction(nsu: String) {
+        try {
+            transaction?.confirmTransaction(nsu.toInt())
+            finalizeTransaction()
+        } catch (e: NumberFormatException) {
+            eventDrivenUiCallback?.uiCallback?.onShowError("NSU não é um número válido")
         }
-
-        credit.confirmTransaction(nsu.toInt())
-        credit.finalizeTransaction()
-
-        onCallback(false, "transaction confirmed")
-
-        clear()
-
     }
 
     @ReactMethod
-    fun finalizeTransaction(
-        onCallback: Callback,
-    ) {
-        val credit = transaction ?: run {
-            onCallback.invoke(true, "Credit instance is null")
-            return
-        }
-
-        credit.finalizeTransaction()
-        onCallback(false, "Transaction finalized")
+    fun finalizeTransaction() {
+        transaction?.finalizeTransaction()
         clear()
-
     }
 
     @ReactMethod
@@ -139,6 +127,38 @@ class TransactionModule(
     @ReactMethod
     fun resultReturnLastStep() {
         eventDrivenUiCallback?.result?.returnLastStep()
+    }
+
+    private fun transact(baseTransaction: BaseTransaction, autoConfirm: Boolean, onCallback: Callback) {
+        val transaction = setTransaction() ?: run {
+            onCallback.invoke(true, "Activity is null")
+            return
+        }
+
+        transaction.transact(
+            baseTransaction,
+            autoConfirm = autoConfirm,
+            onFailure = {
+                onCallback.invoke(true)
+            },
+            onSuccess = { transactionResult ->
+                onCallback.invoke(false, transactionResult)
+            }
+        )
+    }
+
+    private fun setTransaction(): Transaction? {
+        val activity: Activity = currentActivity ?: run {
+            return null
+        }
+        return transaction ?: run {
+            val uiCallback = EventDrivenUiCallback(reactContext::sendEvent)
+            Transaction(activity, uiCallback.uiCallback)
+                .also {
+                    transaction = it
+                    eventDrivenUiCallback = uiCallback
+                }
+        }
     }
 
 }
