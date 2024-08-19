@@ -91,6 +91,12 @@ class Transaction(
             .withApplicationName<CreditTransactionBuilder>(applicationName)
             .apply {
                 withFinancialType(transaction.financialType)
+                if (transaction.amount != null) {
+                    withAmount<CreditTransactionBuilder>(transaction.amount)
+                }
+                if (transaction.cpf != null) {
+                    withCpf<CreditTransactionBuilder>(transaction.cpf)
+                }
                 if (transaction.installmentAmount != null) {
                     withInstallmentAmount(transaction.installmentAmount)
                 }

@@ -17,9 +17,9 @@ class DebitTransaction private constructor(
 
         override fun build(): DebitTransaction {
             return DebitTransaction(
-                amount,
-                cpf,
-                enablePinpad,
+                amount = amount,
+                cpf = cpf,
+                enablePinpad = enablePinpad,
             )
         }
     }

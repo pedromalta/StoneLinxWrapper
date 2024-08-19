@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.linx.dtefmobile.model.FinancialType
+import com.linx.dtefmobile.sdk.CreditTransactionBuilder
 import com.linx.dtefmobile.sdk.DebitTransactionBuilder
 import com.linx.dtefmobile.sdk.TransactionBuilder
 import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
@@ -39,15 +40,11 @@ class TransactionModule(
         autoConfirm: Boolean,
         enablePinpad: Boolean,
         amount: String,
-        cpf: String,
         onCallback: Callback,
     ) {
         val debitTransaction = DebitTransaction.Builder().apply {
             if (amount.isNotBlank()) {
                 amount(amount.toDouble())
-            }
-            if (cpf.isNotBlank()) {
-                cpf(cpf)
             }
             enablePinpad(enablePinpad)
         }.build()
@@ -60,7 +57,7 @@ class TransactionModule(
     fun credit(
         autoConfirm: Boolean,
         enablePinpad: Boolean,
-        installmentAmount: String,
+        amount: String,
         installment: String,
         cardNumber: String,
         financialType: String,
@@ -68,8 +65,8 @@ class TransactionModule(
     ) {
 
         val creditTransaction = CreditTransaction.Builder().apply {
-            if (installmentAmount.isNotBlank()) {
-                installmentAmount(installmentAmount.toDouble())
+            if (amount.isNotBlank()) {
+                amount(amount.toDouble())
             }
             if (installment.isNotBlank()) {
                 installment(installment.toInt())
