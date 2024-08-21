@@ -60,6 +60,7 @@ class TransactionModule(
         amount: String,
         installment: String,
         cardNumber: String,
+        withCardNumberTypingEnabled: Boolean,
         financialType: String,
         onCallback: Callback,
     ) {
@@ -74,6 +75,7 @@ class TransactionModule(
             if (cardNumber.isNotBlank()) {
                 cardNumber(cardNumber)
             }
+            withEnableCardNumberTyping(withCardNumberTypingEnabled)
             enablePinpad(enablePinpad)
             financialType(FinancialType.fromString(financialType))
         }.build()

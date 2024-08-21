@@ -106,6 +106,9 @@ class Transaction(
                 if (!transaction.cardNumber.isNullOrEmpty()) {
                     withCardNumber(transaction.cardNumber)
                 }
+                if (transaction.withCardNumberTypingEnabled != null) {
+                    withCardNumberTypingEnabled<CreditTransactionBuilder>(transaction.withCardNumberTypingEnabled)
+                }
             }
             .withEnablePinpad(transaction.enablePinpad)
     }
@@ -121,6 +124,7 @@ class Transaction(
                     withCpf<DebitTransactionBuilder>(transaction.cpf)
                 }
                 withEnablePinpad<DebitTransactionBuilder>(transaction.enablePinpad)
+                withCardNumberTypingEnabled<DebitTransactionBuilder>(transaction.withCardNumberTypingEnabled)
             }
             .withEnablePinpad(true)
     }
