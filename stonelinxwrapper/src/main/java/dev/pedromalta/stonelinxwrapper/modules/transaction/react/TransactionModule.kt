@@ -47,8 +47,10 @@ class TransactionModule(
             if (amount.isNotBlank()) {
                 amount(amount.toDouble())
             }
-            withEnableCardNumberTyping(withCardNumberTypingEnabled)
+            withCardNumberTypingEnable(withCardNumberTypingEnabled)
             enablePinpad(enablePinpad)
+            withCardNumberTypingEnable(withCardNumberTypingEnabled)
+
         }.build()
 
         transact(debitTransaction, autoConfirm, onCallback)
@@ -77,7 +79,7 @@ class TransactionModule(
             if (cardNumber.isNotBlank()) {
                 cardNumber(cardNumber)
             }
-            withEnableCardNumberTyping(withCardNumberTypingEnabled)
+            withCardNumberTypingEnable(withCardNumberTypingEnabled)
             enablePinpad(enablePinpad)
             financialType(FinancialType.fromString(financialType))
         }.build()
