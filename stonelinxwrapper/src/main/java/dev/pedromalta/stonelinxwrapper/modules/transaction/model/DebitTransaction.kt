@@ -16,7 +16,7 @@ class DebitTransaction private constructor(
         fun amount(amount: Double) = apply { this.amount = amount }
         fun cpf(cpf: String) = apply { this.cpf = cpf }
         fun enablePinpad(enablePinpad: Boolean) = apply { this.enablePinpad = enablePinpad }
-        fun withEnableCardNumberTyping(withCardNumberTypingEnabled: Boolean) = apply {
+        fun withCardNumberTypingEnabled(withCardNumberTypingEnabled: Boolean) = apply {
             this.withCardNumberTypingEnabled = withCardNumberTypingEnabled
         }
         override fun build(): DebitTransaction {

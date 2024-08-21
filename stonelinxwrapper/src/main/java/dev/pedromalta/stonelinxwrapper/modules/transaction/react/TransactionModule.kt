@@ -40,12 +40,14 @@ class TransactionModule(
         autoConfirm: Boolean,
         enablePinpad: Boolean,
         amount: String,
+        withCardNumberTypingEnabled: Boolean,
         onCallback: Callback,
     ) {
         val debitTransaction = DebitTransaction.Builder().apply {
             if (amount.isNotBlank()) {
                 amount(amount.toDouble())
             }
+            withEnableCardNumberTyping(withCardNumberTypingEnabled)
             enablePinpad(enablePinpad)
         }.build()
 

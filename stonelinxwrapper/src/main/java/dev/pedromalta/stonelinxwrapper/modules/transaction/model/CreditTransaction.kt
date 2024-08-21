@@ -32,7 +32,7 @@ class CreditTransaction private constructor(
         fun cardNumber(cardNumber: String) = apply { this.cardNumber = cardNumber }
         fun enablePinpad(enablePinpad: Boolean) = apply { this.enablePinpad = enablePinpad }
         fun financialType(financialType: FinancialType) = apply { this.financialType = financialType }
-        fun withEnableCardNumberTyping(withCardNumberTypingEnabled: Boolean) = apply {
+        fun withCardNumberTypingEnabled(withCardNumberTypingEnabled: Boolean) = apply {
             this.withCardNumberTypingEnabled = withCardNumberTypingEnabled
         }
 
