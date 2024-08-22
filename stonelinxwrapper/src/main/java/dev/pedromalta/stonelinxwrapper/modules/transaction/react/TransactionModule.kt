@@ -8,6 +8,8 @@ import com.facebook.react.bridge.ReactMethod
 import com.linx.dtefmobile.model.FinancialType
 import com.linx.dtefmobile.sdk.CreditTransactionBuilder
 import com.linx.dtefmobile.sdk.DebitTransactionBuilder
+import com.linx.dtefmobile.sdk.MenuItem
+import com.linx.dtefmobile.sdk.MenuResult
 import com.linx.dtefmobile.sdk.TransactionBuilder
 import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
 import dev.pedromalta.stonelinxwrapper.helpers.sendEvent
@@ -128,6 +130,25 @@ class TransactionModule(
     @ReactMethod
     fun resultReturnLastStep() {
         eventDrivenUiCallback?.result?.returnLastStep()
+    }
+
+    @ReactMethod
+    fun menuResultSuccess(
+        code: Double,
+    ) {
+        // MenuItem checks equality with Code
+        val menuItem = MenuItem(code.toInt(), "")
+        eventDrivenUiCallback?.menuResult?.success(menuItem)
+    }
+
+    @ReactMethod
+    fun menuResultCanceled() {
+        eventDrivenUiCallback?.menuResult?.canceled()
+    }
+
+    @ReactMethod
+    fun menuResultReturnLastStep() {
+        eventDrivenUiCallback?.menuResult?.returnLastStep()
     }
 
     private fun transact(baseTransaction: BaseTransaction, autoConfirm: Boolean, onCallback: Callback) {

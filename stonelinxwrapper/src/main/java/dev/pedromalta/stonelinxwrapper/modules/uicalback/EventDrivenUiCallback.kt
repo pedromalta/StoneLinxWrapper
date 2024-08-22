@@ -17,6 +17,10 @@ class EventDrivenUiCallback(
     private val sendEvent: (eventName: String, params: WritableMap?) -> Unit,
 ) {
 
+    companion object {
+        private const val TAG = "EventDrivenUiCallback"
+    }
+
     /**
      * Result of calls for this UiCallback,
      * from here you can confirm, cancel or return to the last step
@@ -31,6 +35,12 @@ class EventDrivenUiCallback(
         private set
 
     /**
+     * Expected Menu from calls for this UiCallback, from here you can select an item and confirm
+     */
+    var menuResult: MenuResult? = null
+        private set
+
+    /**
      * Cancel the UiCallback
      */
     fun cancel() {
@@ -42,7 +52,7 @@ class EventDrivenUiCallback(
         private var canceled = false
 
         override fun onBeep() {
-            Log.i("LinxUiCallBackEvent", "onBeep")
+            Log.i(TAG, "onBeep")
             sendEvent(
                 "onBeep",
                 null
@@ -50,15 +60,15 @@ class EventDrivenUiCallback(
         }
 
         override fun onClean() {
-            Log.i("LinxUiCallBackEvent", "onClean")
+            Log.i(TAG, "onClean")
             sendEvent(
                 "onClean",
                 null
             )
         }
 
-        override fun onShowError(error: String?) {
-            Log.i("LinxUiCallBackEvent", "onShowError: $error")
+        override fun onShowError(error: String) {
+            Log.i(TAG, "onShowError: $error")
             sendEvent(
                 "onShowError",
                 Arguments.createMap().apply {
@@ -67,8 +77,8 @@ class EventDrivenUiCallback(
             )
         }
 
-        override fun onShowMessage(message: String?) {
-            Log.i("LinxUiCallBackEvent", "onShowMessage: $message")
+        override fun onShowMessage(message: String) {
+            Log.i(TAG, "onShowMessage: $message")
             sendEvent(
                 "onShowMessage",
                 Arguments.createMap().apply {
@@ -77,8 +87,8 @@ class EventDrivenUiCallback(
             )
         }
 
-        override fun requestConfirmation(message: String?, result: Result?) {
-            Log.i("LinxUiCallBackEvent", "requestConfirmation: $message")
+        override fun requestConfirmation(message: String, result: Result) {
+            Log.i(TAG, "requestConfirmation: $message")
             this@EventDrivenUiCallback.result = result
             sendEvent(
                 "onRequestConfirmation",
@@ -88,8 +98,8 @@ class EventDrivenUiCallback(
             )
         }
 
-        override fun onShowAlert(alert: String?) {
-            Log.i("LinxUiCallBackEvent", "onShowAlert: $alert")
+        override fun onShowAlert(alert: String) {
+            Log.i(TAG, "onShowAlert: $alert")
             sendEvent(
                 "onShowAlert",
                 Arguments.createMap().apply {
@@ -98,13 +108,10 @@ class EventDrivenUiCallback(
             )
         }
 
-        override fun onInput(input: InputModel<*>?, result: Result?) {
-            Log.i("LinxUiCallBackEvent", "onShowInput: $input")
+        override fun onInput(input: InputModel<*>, result: Result) {
+            Log.i(TAG, "onShowInput: $input")
             this@EventDrivenUiCallback.result = result
             this@EventDrivenUiCallback.input = input
-            if (input == null) {
-                return
-            }
 
             sendEvent(
                 "onInput",
@@ -130,12 +137,35 @@ class EventDrivenUiCallback(
         }
 
         override fun onShowMenu(
-            message: String?,
-            menuItem: MutableList<MenuItem>?,
-            p2: Int,
-            p3: MenuResult?
+            title: String,
+            list: List<MenuItem>,
+            selected: Int,
+            menuResult: MenuResult
         ) {
-            //TODO("Not yet implemented")
+            Log.i(TAG, "onShowMenu: $title")
+            this@EventDrivenUiCallback.menuResult = menuResult
+
+            val mappedList = Arguments.createArray().apply {
+                // map objects to react native
+                list.map {
+                    Arguments.createMap().apply {
+                        putDouble("code", it.code.toDouble())
+                        putString("display", it.display)
+                        putString("externalCode", it.externalCode)
+                        putString("raw", it.raw)
+                    }
+                    //push then into the array
+                }.forEach { pushMap(it) }
+            }
+
+            sendEvent(
+                "onShowMenu",
+                Arguments.createMap().apply {
+                    putString("title", title)
+                    putDouble("selected", selected.toDouble())
+                    putArray("list", mappedList)
+                }
+            )
         }
 
         override fun onMaskInput(
@@ -150,12 +180,12 @@ class EventDrivenUiCallback(
         }
 
         override fun getCanceledStatus(): Int {
-            Log.e("StoneLinxWrapperAuthModule", "getCanceledStatus")
+            Log.e(TAG, "getCanceledStatus")
             return if (!canceled) 0  else 1
         }
 
         override fun setCanceled(cancel: Boolean): Int {
-            Log.e("StoneLinxWrapperAuthModule", "setCanceled: $cancel")
+            Log.e(TAG, "setCanceled: $cancel")
             canceled = cancel
             return 0
         }
