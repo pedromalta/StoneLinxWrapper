@@ -47,7 +47,7 @@ class TransactionModule(
             if (amount.isNotBlank()) {
                 amount(amount.toDouble())
             }
-            withEnableCardNumberTyping(withCardNumberTypingEnabled)
+            withCardNumberTypingEnabled(withCardNumberTypingEnabled)
             enablePinpad(enablePinpad)
         }.build()
 
@@ -77,7 +77,7 @@ class TransactionModule(
             if (cardNumber.isNotBlank()) {
                 cardNumber(cardNumber)
             }
-            withEnableCardNumberTyping(withCardNumberTypingEnabled)
+            withCardNumberTypingEnabled(withCardNumberTypingEnabled)
             enablePinpad(enablePinpad)
             financialType(FinancialType.fromString(financialType))
         }.build()
