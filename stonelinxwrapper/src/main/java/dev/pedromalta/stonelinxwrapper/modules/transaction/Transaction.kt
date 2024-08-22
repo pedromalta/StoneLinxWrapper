@@ -12,7 +12,6 @@ import com.linx.dtefmobile.sdk.TransactionBuilder
 import com.linx.dtefmobile.sdk.UICallback
 import dev.pedromalta.stonelinxwrapper.helpers.toReadableMap
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.BaseTransaction
-import dev.pedromalta.stonelinxwrapper.modules.transaction.model.BaseTransactionBuilder
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.DebitTransaction
 

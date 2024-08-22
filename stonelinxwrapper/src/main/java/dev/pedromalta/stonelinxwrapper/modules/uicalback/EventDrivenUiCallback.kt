@@ -176,7 +176,8 @@ class EventDrivenUiCallback(
             p4: Boolean,
             p5: Result?
         ) {
-            //TODO("Not yet implemented")
+            Log.e(TAG, "onMaskInput: NOT IMPLEMENTED YET!")
+            TODO("Not yet implemented")
         }
 
         override fun getCanceledStatus(): Int {

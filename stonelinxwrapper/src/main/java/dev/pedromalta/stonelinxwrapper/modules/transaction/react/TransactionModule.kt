@@ -6,11 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.linx.dtefmobile.model.FinancialType
-import com.linx.dtefmobile.sdk.CreditTransactionBuilder
-import com.linx.dtefmobile.sdk.DebitTransactionBuilder
 import com.linx.dtefmobile.sdk.MenuItem
-import com.linx.dtefmobile.sdk.MenuResult
-import com.linx.dtefmobile.sdk.TransactionBuilder
 import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
 import dev.pedromalta.stonelinxwrapper.helpers.sendEvent
 import dev.pedromalta.stonelinxwrapper.modules.transaction.Transaction
