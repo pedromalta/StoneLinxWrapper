@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.linx.dtefmobile.model.Info
+import com.linx.dtefmobile.sdk.MenuItem
 import com.linx.dtefmobile.sdk.TransactionResult
 
 fun Info.toReadableMap(): ReadableMap = Arguments.createMap().apply {
@@ -49,6 +50,13 @@ fun TransactionResult.toReadableMap(): ReadableMap = Arguments.createMap().apply
     putString("financialType", financialType)
     putString("operationType", operationType)
 
+}
+
+fun MenuItem.toReadableMap(): ReadableMap = Arguments.createMap().apply {
+    putDouble("code", code.toDouble())
+    putString("display", display)
+    putString("externalCode", externalCode)
+    putString("raw", raw)
 }
 
 fun ReactApplicationContext.sendEvent(eventName: String, params: WritableMap?) {

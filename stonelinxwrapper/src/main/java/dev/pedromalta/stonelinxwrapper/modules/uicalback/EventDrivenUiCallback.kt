@@ -8,6 +8,7 @@ import com.linx.dtefmobile.sdk.MenuItem
 import com.linx.dtefmobile.sdk.MenuResult
 import com.linx.dtefmobile.sdk.Result
 import com.linx.dtefmobile.sdk.UICallback
+import dev.pedromalta.stonelinxwrapper.helpers.toReadableMap
 import java.math.BigDecimal
 
 /**
@@ -147,15 +148,10 @@ class EventDrivenUiCallback(
 
             // map objects to react native
             val mappedList = list.map {
-                Arguments.createMap().apply {
-                    putDouble("code", it.code.toDouble())
-                    putString("display", it.display)
-                    putString("externalCode", it.externalCode)
-                    putString("raw", it.raw)
-                }
+                it.toReadableMap()
             }
 
-            val arrayOfMaps = Arguments.fromArray(mappedList.toTypedArray())
+            val arrayOfMaps = Arguments.fromJavaArgs(mappedList.toTypedArray())
 
             sendEvent(
                 "onShowMenu",
