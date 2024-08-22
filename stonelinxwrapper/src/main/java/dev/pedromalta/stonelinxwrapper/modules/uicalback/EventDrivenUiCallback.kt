@@ -47,7 +47,7 @@ class EventDrivenUiCallback(
         uiCallback.setCanceled(true)
     }
 
-    val uiCallback = object: UICallback {
+    val uiCallback = object : UICallback {
 
         private var canceled = false
 
@@ -145,25 +145,24 @@ class EventDrivenUiCallback(
             Log.i(TAG, "onShowMenu: $title")
             this@EventDrivenUiCallback.menuResult = menuResult
 
-            val mappedList = Arguments.createArray().apply {
-                // map objects to react native
-                list.map {
-                    Arguments.createMap().apply {
-                        putDouble("code", it.code.toDouble())
-                        putString("display", it.display)
-                        putString("externalCode", it.externalCode)
-                        putString("raw", it.raw)
-                    }
-                    //push then into the array
-                }.forEach { pushMap(it) }
+            // map objects to react native
+            val mappedList = list.map {
+                Arguments.createMap().apply {
+                    putDouble("code", it.code.toDouble())
+                    putString("display", it.display)
+                    putString("externalCode", it.externalCode)
+                    putString("raw", it.raw)
+                }
             }
+
+            val arrayOfMaps = Arguments.fromArray(mappedList.toTypedArray())
 
             sendEvent(
                 "onShowMenu",
                 Arguments.createMap().apply {
                     putString("title", title)
                     putDouble("selected", selected.toDouble())
-                    putArray("list", mappedList)
+                    putArray("list", arrayOfMaps)
                 }
             )
         }
@@ -182,7 +181,7 @@ class EventDrivenUiCallback(
 
         override fun getCanceledStatus(): Int {
             Log.e(TAG, "getCanceledStatus")
-            return if (!canceled) 0  else 1
+            return if (!canceled) 0 else 1
         }
 
         override fun setCanceled(cancel: Boolean): Int {
