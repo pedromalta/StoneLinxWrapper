@@ -8,6 +8,8 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.linx.dtefmobile.model.Info
 import com.linx.dtefmobile.sdk.MenuItem
 import com.linx.dtefmobile.sdk.TransactionResult
+import org.json.JSONArray
+import org.json.JSONObject
 
 fun Info.toReadableMap(): ReadableMap = Arguments.createMap().apply {
     putString("sdkVersion", sdkVersion)
@@ -52,12 +54,20 @@ fun TransactionResult.toReadableMap(): ReadableMap = Arguments.createMap().apply
 
 }
 
-fun MenuItem.toReadableMap(): ReadableMap = Arguments.createMap().apply {
-    putDouble("code", code.toDouble())
-    putString("display", display)
-    putString("externalCode", externalCode)
-    putString("raw", raw)
-}
+fun MenuItem.toJSONObject(): JSONObject =
+    JSONObject().apply {
+        put("code", code)
+        put("display", display)
+        put("externalCode", externalCode)
+        put("raw", raw)
+    }
+
+fun List<MenuItem>.toJSONString(): String =
+    JSONArray().apply {
+        forEach {
+            put(it.toJSONObject())
+        }
+    }.toString()
 
 fun ReactApplicationContext.sendEvent(eventName: String, params: WritableMap?) {
     getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
