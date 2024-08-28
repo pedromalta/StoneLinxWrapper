@@ -3,6 +3,7 @@ package dev.pedromalta.stonelinxwrapper.modules.transaction
 import android.app.Activity
 import android.util.Log
 import com.facebook.react.bridge.ReadableMap
+import com.linx.dtefmobile.sdk.CancelTransactionBuilder
 import com.linx.dtefmobile.sdk.ConfirmationTransactionBuilder
 import com.linx.dtefmobile.sdk.CreditTransactionBuilder
 import com.linx.dtefmobile.sdk.DebitTransactionBuilder
@@ -12,6 +13,7 @@ import com.linx.dtefmobile.sdk.TransactionBuilder
 import com.linx.dtefmobile.sdk.UICallback
 import dev.pedromalta.stonelinxwrapper.helpers.toReadableMap
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.BaseTransaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CancelTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.DebitTransaction
 
@@ -35,6 +37,10 @@ class Transaction(
             }
             is DebitTransaction -> {
                 buildDebitTransaction(transaction)
+            }
+
+            is CancelTransaction -> {
+                buildCancelTransaction(transaction)
             }
         }
 
@@ -124,6 +130,19 @@ class Transaction(
                 }
                 withEnablePinpad<DebitTransactionBuilder>(transaction.enablePinpad)
                 withCardNumberTypingEnabled<DebitTransactionBuilder>(transaction.withCardNumberTypingEnabled)
+            }
+            .withEnablePinpad(true)
+    }
+
+    private fun buildCancelTransaction(transaction: CancelTransaction): TransactionBuilder {
+        return TransactionBuilder.cancel()
+            .withApplicationName<CancelTransactionBuilder>(applicationName)
+            .apply {
+                if (transaction.nsu != null) {
+                    withNsu(transaction.nsu)
+                }
+                withEnablePinpad<CancelTransactionBuilder>(transaction.enablePinpad)
+                withCardNumberTypingEnabled<CancelTransactionBuilder>(transaction.withCardNumberTypingEnabled)
             }
             .withEnablePinpad(true)
     }

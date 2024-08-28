@@ -11,6 +11,7 @@ import dev.pedromalta.stonelinxwrapper.helpers.GetFullModuleName
 import dev.pedromalta.stonelinxwrapper.helpers.sendEvent
 import dev.pedromalta.stonelinxwrapper.modules.transaction.Transaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.BaseTransaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CancelTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.DebitTransaction
 import dev.pedromalta.stonelinxwrapper.modules.uicalback.EventDrivenUiCallback
@@ -85,6 +86,26 @@ class TransactionModule(
     }
 
     @ReactMethod
+    fun cancel(
+        autoConfirm: Boolean,
+        enablePinpad: Boolean,
+        nsu: String,
+        withCardNumberTypingEnabled: Boolean,
+        onCallback: Callback,
+    ) {
+        val cancelTransaction = CancelTransaction.Builder().apply {
+            if (nsu.isNotBlank()) {
+                nsu(nsu.toInt())
+            }
+            withCardNumberTypingEnabled(withCardNumberTypingEnabled)
+            enablePinpad(enablePinpad)
+        }.build()
+
+        transact(cancelTransaction, autoConfirm, onCallback)
+
+    }
+
+    @ReactMethod
     fun confirmTransaction(nsu: String) {
         try {
             transaction?.confirmTransaction(nsu.toInt())
@@ -104,11 +125,6 @@ class TransactionModule(
     fun getRunningStatus(): Boolean {
         val uiCallback = transaction?.uiCallback
         return uiCallback != null && uiCallback.canceledStatus != 1
-    }
-
-    @ReactMethod
-    fun cancel() {
-        transaction?.uiCallback?.setCanceled(true)
     }
 
     @ReactMethod
