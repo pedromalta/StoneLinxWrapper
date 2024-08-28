@@ -41,12 +41,6 @@ class EventDrivenUiCallback(
     var menuResult: MenuResult? = null
         private set
 
-    /**
-     * Cancel the UiCallback
-     */
-    fun cancel() {
-        uiCallback.setCanceled(true)
-    }
 
     val uiCallback = object : UICallback {
 
