@@ -90,12 +90,16 @@ class TransactionModule(
         autoConfirm: Boolean,
         enablePinpad: Boolean,
         nsu: String,
+        amount: String,
         withCardNumberTypingEnabled: Boolean,
         onCallback: Callback,
     ) {
         val cancelTransaction = CancelTransaction.Builder().apply {
             if (nsu.isNotBlank()) {
                 nsu(nsu.toInt())
+            }
+            if (amount.isNotBlank()) {
+                amount(amount.toDouble())
             }
             withCardNumberTypingEnabled(withCardNumberTypingEnabled)
             enablePinpad(enablePinpad)
