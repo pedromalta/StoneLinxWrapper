@@ -141,6 +141,9 @@ class Transaction(
                 if (transaction.nsu != null) {
                     withNsu(transaction.nsu)
                 }
+                if (transaction.amount != null) {
+                    withAmount<CancelTransactionBuilder>(transaction.amount)
+                }
                 withEnablePinpad<CancelTransactionBuilder>(transaction.enablePinpad)
                 withCardNumberTypingEnabled<CancelTransactionBuilder>(transaction.withCardNumberTypingEnabled)
             }
