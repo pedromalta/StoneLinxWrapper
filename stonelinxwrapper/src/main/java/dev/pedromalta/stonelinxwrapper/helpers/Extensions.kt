@@ -34,6 +34,7 @@ fun TransactionResult.toReadableMap(): ReadableMap = Arguments.createMap().apply
     putString("transactionDiscount", transactionDiscount)
     putString("authorizationCode", authorizationCode)
     putString("nsu", nsu)
+    putString("authorizerNsu", authorizerNsu)
     putString("authorizerNsuAdicional", authorizerNsuAdicional)
     putString("brandCode", brandCode)
     putString("brand", brand)
