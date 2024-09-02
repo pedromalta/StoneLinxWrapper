@@ -120,6 +120,11 @@ class TransactionModule(
     }
 
     @ReactMethod
+    fun cancelAction() {
+        transaction?.uiCallback?.setCanceled(true)
+    }
+
+    @ReactMethod
     fun finalizeTransaction() {
         transaction?.finalizeTransaction()
         clear()
