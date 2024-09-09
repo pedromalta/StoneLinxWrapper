@@ -11,11 +11,13 @@ import com.linx.dtefmobile.sdk.MobileSDK
 import com.linx.dtefmobile.sdk.Transaction
 import com.linx.dtefmobile.sdk.TransactionBuilder
 import com.linx.dtefmobile.sdk.UICallback
+import com.linx.dtefmobile.sdk.UndoTransactionBuilder
 import dev.pedromalta.stonelinxwrapper.helpers.toReadableMap
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.BaseTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CancelTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.DebitTransaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.UndoTransaction
 
 class Transaction(
     activity: Activity,
@@ -41,6 +43,10 @@ class Transaction(
 
             is CancelTransaction -> {
                 buildCancelTransaction(transaction)
+            }
+
+            is UndoTransaction -> {
+                buildUndoTransaction(transaction)
             }
         }
 
@@ -146,6 +152,23 @@ class Transaction(
                 }
                 withEnablePinpad<CancelTransactionBuilder>(transaction.enablePinpad)
                 withCardNumberTypingEnabled<CancelTransactionBuilder>(transaction.withCardNumberTypingEnabled)
+            }
+            .withEnablePinpad(true)
+    }
+
+
+    private fun buildUndoTransaction(transaction: UndoTransaction): TransactionBuilder {
+        return TransactionBuilder.undo()
+            .withApplicationName<UndoTransactionBuilder>(applicationName)
+            .apply {
+                if (transaction.nsu != null) {
+                    withNsu<UndoTransactionBuilder>(transaction.nsu)
+                }
+                if (transaction.amount != null) {
+                    withAmount<UndoTransactionBuilder>(transaction.amount)
+                }
+                withEnablePinpad<UndoTransactionBuilder>(transaction.enablePinpad)
+                withCardNumberTypingEnabled<UndoTransactionBuilder>(transaction.withCardNumberTypingEnabled)
             }
             .withEnablePinpad(true)
     }

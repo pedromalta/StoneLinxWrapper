@@ -14,6 +14,7 @@ import dev.pedromalta.stonelinxwrapper.modules.transaction.model.BaseTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CancelTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.CreditTransaction
 import dev.pedromalta.stonelinxwrapper.modules.transaction.model.DebitTransaction
+import dev.pedromalta.stonelinxwrapper.modules.transaction.model.UndoTransaction
 import dev.pedromalta.stonelinxwrapper.modules.uicalback.EventDrivenUiCallback
 
 class TransactionModule(
@@ -108,6 +109,29 @@ class TransactionModule(
         transact(cancelTransaction, autoConfirm, onCallback)
 
     }
+
+    @ReactMethod
+    fun undo(
+        autoConfirm: Boolean,
+        enablePinpad: Boolean,
+        nsu: String,
+        amount: String,
+        withCardNumberTypingEnabled: Boolean,
+        onCallback: Callback,
+    ) {
+        val undoTransaction = UndoTransaction.Builder().apply {
+            if (nsu.isNotBlank()) {
+                nsu(nsu.toInt())
+            }
+            if (amount.isNotBlank()) {
+                amount(amount.toDouble())
+            }
+            withCardNumberTypingEnabled(withCardNumberTypingEnabled)
+            enablePinpad(enablePinpad)
+        }.build()
+        transact(undoTransaction, autoConfirm, onCallback)
+    }
+
 
     @ReactMethod
     fun confirmTransaction(nsu: String) {
