@@ -153,7 +153,7 @@ class Transaction(
                 withEnablePinpad<CancelTransactionBuilder>(transaction.enablePinpad)
                 withCardNumberTypingEnabled<CancelTransactionBuilder>(transaction.withCardNumberTypingEnabled)
             }
-            .withEnablePinpad(true)
+            .withEnablePinpad(transaction.enablePinpad)
     }
 
 
@@ -170,7 +170,7 @@ class Transaction(
                 withEnablePinpad<UndoTransactionBuilder>(transaction.enablePinpad)
                 withCardNumberTypingEnabled<UndoTransactionBuilder>(transaction.withCardNumberTypingEnabled)
             }
-            .withEnablePinpad(true)
+            .withEnablePinpad(transaction.enablePinpad)
     }
 
 }
